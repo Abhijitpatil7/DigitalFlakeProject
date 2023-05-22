@@ -1,6 +1,7 @@
 const express=require("express");
 const core =require("cors");
 const jwt = require('jsonwebtoken');
+const secretKey="secretkey";
 
 var app=express();
 const bodyparser=require("body-parser");
@@ -106,6 +107,30 @@ app.use(core());
 app.use(bodyparser.urlencoded({extended:true}));
 app.use(express.json());
 
+// app.post("/addcategory",verifyToken,(req,res)=>{
+//   jwt.verify(req.token,secretKey,(err)=>{
+//     if(err){
+//       res.send({
+//         result:"Invalid Token....."
+//       })}
+//       else{
+//     var name = req.query.name;
+//     var description = req.query.description;
+//     var status = req.query.status;
+//     console.log(name); 
+//     var values = [
+//        name,description,status
+//       ];
+//     const sql="insert into category (name,description,status) values (?)";
+//     db.query(sql,[values],(err,result)=>{
+//     console.log("error",err);
+//     console.log("result",result);
+//     res.send("hello world");
+// })}
+//   })
+// });
+
+
 app.post("/addcategory",(req,res)=>{
     var name = req.query.name;
     var description = req.query.description;
@@ -114,15 +139,88 @@ app.post("/addcategory",(req,res)=>{
     var values = [
        name,description,status
       ];
- const sql="insert into category (name,description,status) values (?)";
+    const sql="insert into category (name,description,status) values (?)";
+    db.query(sql,[values],(err,result)=>{
+    console.log("error",err);
+    console.log("result",result);
+    res.send("hello world");
+})}
+  );
+
+
+app.post("/updatecategory",verifyToken,(req,res)=>{
+  jwt.verify(req.token,secretKey,(err)=>{
+    if(err){
+      res.send({
+        result:"Invalid Token"
+      })}
+      else{
+    var id=req.params.id;   
+    var name = req.query.name;
+    var description = req.query.description;
+    var status = req.query.status;
+    console.log(name); 
+    var values = [
+       name,description,status,id
+      ];
+ const sql='UPDATE category SET name = ?, description = ?, status = ? WHERE id = ?';
     db.query(sql,[values],(err,result)=>{
      console.log("error",err);
      console.log("result",result);
     res.send("hello world");
-})
+})}
+  })
 });
 
+app.post("/updateproduct",verifyToken,(req,res)=>{
+  jwt.verify(req.token,secretKey,(err)=>{
+    if(err){
+      res.send({
+        result:"Invalid Token"
+      })}
+      else{
+    var id=req.params.id;   
+    var name = req.query.name;
+    var packsize= req.query.packsize;
+    var category= req.query.category;
+    var mrp= req.query.mrp;
+    var status= req.query.status;
+    var values = [
+       name,packsize,category,mrp,status,id
+      ];
+ const sql="UPDATE product SET name = ? packsize= ? category=? mrp= ? status=? WHERE address = ?";
+    db.query(sql,[values],(err,result)=>{
+     console.log("error",err);
+     console.log("result",result);
+    res.send("hello world");
+})}
+  })
+});
+
+
+
+// app.post("/deletecategory",verifyToken,(req,res)=>{
+//   jwt.verify(req.token,secretKey,(err)=>{
+//     if(err){
+//       res.send({
+//         result:"Invalid Token"
+//       })}
+//       else{
+//    var id=req.query.id;
+//     var values = [
+//       id
+//       ];
+//  const sql="DELETE FROM category WHERE id = ?";
+//     db.query(sql,[values],(err,result)=>{
+//      console.log("error",err);
+//      console.log("result",result);
+//     res.send("hello world");
+// })}
+// })
+// });
+
 app.post("/deletecategory",(req,res)=>{
+ 
    var id=req.query.id;
     var values = [
       id
@@ -132,8 +230,10 @@ app.post("/deletecategory",(req,res)=>{
      console.log("error",err);
      console.log("result",result);
     res.send("hello world");
-})
-});
+})}
+);
+
+
 
 app.post("/deleteproduct",(req,res)=>{
     var id=req.query.id;
@@ -145,10 +245,40 @@ app.post("/deleteproduct",(req,res)=>{
      console.log("error",err);
      console.log("result",result);
     res.send("hello world");
-})
-});
+})}
+);
+
+
+// app.post("/addproduct",verifyToken,(req,res)=>{
+//   jwt.verify(req.token,secretKey,(err)=>{
+//     if(err){
+//       res.send({
+//         result:"Invalid Token"
+//       })
+//     }else{
+//     var name= req.query.name;
+//    var packsize= req.query.packsize;
+//    var category= req.query.category;
+//    var mrp= req.query.mrp;
+//    var status= req.query.status;
+//     var catID= req.query.catID;
+//     console.log(catID);
+//     var values=[
+//         name,packsize,category,mrp,status,catID
+//     ]
+//     const sql="insert into product(name,packsize,category,mrp,status,catID) values (?)";
+   
+//     db.query(sql,[values],(err,result)=>{
+//      console.log("error",err);
+//      console.log("result",result);
+//     res.send("hello world");
+// })}
+// })
+// });
 
 app.post("/addproduct",(req,res)=>{
+ 
+
     var name= req.query.name;
    var packsize= req.query.packsize;
    var category= req.query.category;
@@ -165,31 +295,70 @@ app.post("/addproduct",(req,res)=>{
      console.log("error",err);
      console.log("result",result);
     res.send("hello world");
-})
-});
+})}
+);
 
-app.get("/showcategory",(req,res)=>{
+
+
+app.get("/showcategory",verifyToken,(req,res)=>{
+  jwt.verify(req.token,secretKey,(err)=>{
+    if(err){
+      res.send({
+        result:"Invalid Token"
+      })
+    }
+    else{
     const s="select * from category";
     db.query(s,(err,result)=>{
         console.log("err",err);
         console.log("result",result);
         res.send(result);
-    })
+    }) }
+})
 });
 
 
 
-app.get("/showproduct",(req,res)=>{
-    const s="select * from product";
-    db.query(s,(err,result)=>{
-        console.log("err",err);
-        console.log("result",result);
-        res.send(result);
+app.get("/showproduct",verifyToken,(req,res)=>{ 
+jwt.verify(req.token,secretKey,(err)=>{
+  if(err){
+    res.send({
+      result:"Invalid Token"
     })
+  }
+else{
+  const s="select * from product";
+  db.query(s,(err,result)=>{
+      console.log("err",err);
+      console.log("result",result);
+      res.send(result);
+  })
+}
+})  
 });
 
-
-
+// app.post("/deleteproduct",verifyToken,(req,res)=>{ 
+//   var id=req.query.id;
+//   var values = [
+//      id
+//     ];
+//   jwt.verify(req.token,secretKey,(err)=>{
+//     if(err){
+//       res.send({
+//         result:"Invalid Token"
+//       })
+//     }
+//   else{
+   
+//     const s="DELETE FROM product WHERE id = ?";
+//     db.query(s,[values],(err,result)=>{
+//         console.log("err",err);
+//         console.log("result",result);
+//         result.send("success");
+//     })
+//   }
+//   })  
+//   });
 
 app.post("/user/generateToken", (req, res) => {
     
@@ -197,25 +366,33 @@ app.post("/user/generateToken", (req, res) => {
     var password=req.query.password;
     console.log("hello");
 
-    if (email==="abhijitpatil5588@gmail.com" && password==="Abhi@123"){
+    if (email==="abhijitpatil5588@gmail.com" && password==="A"){
     console.log("hello");
-    // Then generate JWT Token
-    let jwtSecretKey = process.env.JWT_SECRET_KEY;
-    // let data = {
-    //     time: Date(),
-    //     userId: 12,
-    // }
-    // const token = jwt.sign(jwtSecretKey);
-    // res.send(token);
+      const data={
+        email,
+        password
+      };
+    const token = jwt.sign(data,secretKey);
+    res.send(token);
 }
 });
 
-
-
-
-
-
-
+function verifyToken(req,resp,next){
+  const bearHeader =req.headers['authorization'];
+  console.log(bearHeader);
+  if(typeof bearHeader !=='undefined'){
+    const bearer=bearHeader.split(" ");
+    const token=bearer[1];
+    req.token=token;
+    next();
+  }
+  else{  
+   
+    resp.send({
+      result:"Token is not valid"
+    })
+  }
+}
 app.listen(5000,()=>{
     console.log("server is listning on port no. 5000");
 })
