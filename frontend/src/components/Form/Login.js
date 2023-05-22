@@ -1,61 +1,79 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 import {
-    MDBBtn,
-    MDBContainer,
-    MDBCard,
-    MDBCardBody,
-    MDBCardImage,
-    MDBRow,
-    MDBCol,
-    MDBIcon,
-    MDBInput
-  }
-  from 'mdb-react-ui-kit';
+  MDBContainer,
+  MDBCol,
+  MDBRow,
+  MDBBtn,
+  MDBIcon,
+  MDBInput,
+  MDBCheckbox
+}
+from 'mdb-react-ui-kit';
 
 const Login = () => {
+  const [cat, setCat] = useState({
+   email:"",
+   password:""
+  });
+  const navigate = useNavigate();
+  let name, value;
+
+  const handleChange = (e) => {
+    name = e.target.name;
+    value = e.target.value;
+    setCat({ ...cat, [name]: value });
+  };
+  const handleclick = (e) => {
+   
+    axios
+    .post(
+      `http://localhost:5000/user/generateToken?email=${cat.email}&password=${cat.password}`
+    )
+      .then((resp) => {
+        const  token  = resp.data;
+        console.log(token);
+        localStorage.setItem('jwtToken', token);
+        navigate(`/navbar`);
+      })
+      .catch((error) => {
+        console.log("error");
+        console.log(cat);
+      });
+      //window.location.reload(false);
+    }
 
   return (
-    <div >
-    <MDBContainer className="my-5">
+  <MDBContainer className="my-5 gradient-form">
 
-<MDBCard>
-  <MDBRow className='g-0'>
+      <MDBRow>
 
-   
-    <MDBCol md='6'>
-      <MDBCardBody className='d-flex flex-column'>
-
-        <div className='d-flex flex-row mt-2'>
-          <MDBIcon fas icon="cubes fa-3x me-3" style={{ color: '#ff6219' }}/>
-          <MDBCardImage src='"D:\DigitalFlake\frontend\public\image 289.png"'  className='rounded-start w-100'/>
-        </div>
-
-        <h5 className="fw-normal my-4 pb-3" style={{letterSpacing: '1px'}}>Welcome to Digitalflake Admin</h5>
-        <div className="col-md-24">
-          <MDBInput wrapperClass='mb-4' label='Email address' id='formControlLg' type='email' size="lg"/>
-          <MDBInput wrapperClass='mb-4' label='Password' id='formControlLg' type='password' size="lg"/>
+        <MDBCol col='6' className="mb-5">
+          <div className="d-flex flex-column ms-5">
+            <div className="text-center">
+              <img style={{backgroundImage: `url(${"Image"})`
+                , width: '185px'}}  />
+              <h4 className="mt-1 mb-5 pb-1">Welcome DigitalFlake Admin</h4>
+            </div>
+            <p>Please login to your account</p>
+            <MDBInput wrapperClass='mb-4' label='Email address' id='email' type='email' name="email" value={cat.email} onChange={handleChange}/>
+            <MDBInput wrapperClass='mb-4' label='Password' id='password' type='password' name="password" value={cat.password} onChange={handleChange} />
+            <div className="text-center pt-1 mb-5 pb-1">
+              <MDBBtn className="mb-4 w-100 gradient-custom-2" onClick={handleclick}>Sign in</MDBBtn>
+              <a className="text-muted" href="#!">Forgot password?</a>
+            </div>
           </div>
+        </MDBCol>
+        <MDBCol col='6' className="mb-5">
+          <div className="d-flex flex-column  justify-content-center gradient-custom-2 h-100 mb-4">
+          </div>
+        </MDBCol>
+      </MDBRow>
 
-        <MDBBtn className="mb-4 px-5" color='dark' size='lg'>Login</MDBBtn>
-        <a className="small text-muted" href="#!">Forgot password?</a>
-        <p className="mb-5 pb-lg-2" style={{color: '#393f81'}}>Don't have an account? <a href="#!" style={{color: '#393f81'}}>Register here</a></p>
+    </MDBContainer>
+);
 
-        <div className='d-flex flex-row justify-content-start'>
-          <a href="#!" className="small text-muted me-1">Terms of use.</a>
-          <a href="#!" className="small text-muted">Privacy policy</a>
-        </div>
-
-      </MDBCardBody>
-    </MDBCol>
-
-  </MDBRow>
-</MDBCard>
-
-</MDBContainer>
-    </div>
-  );
 };
 
 export default Login;

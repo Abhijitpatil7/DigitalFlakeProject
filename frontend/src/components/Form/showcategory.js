@@ -2,18 +2,16 @@ import axios from "axios";
 import { useEffect, useState  } from "react";
 import { useParams } from "react-router-dom";
 
-
-
 const ShowCategory=()=>{
-//   let id =useParams();
-//   let numberid= parseInt(id.id);
-//   console.log(numberid);
-
 
 const [prod, setProd] = useState([])
 
+const storedToken = localStorage.getItem('jwtToken');
+  console.log(storedToken);
+const headers ={'Authorization' : `bearer ${storedToken}` }
+console.log(headers);
   useEffect(() => {
-    axios.get(`http://localhost:5000/showcategory`).then((res)=>{
+    axios.get(`http://localhost:5000/showcategory`,{ headers }).then((res)=>{
     console.log(res)
       setProd(res.data)
   })
@@ -22,9 +20,9 @@ const [prod, setProd] = useState([])
   function remove(data){
     console.log("in remove");
     console.log(data);
-    axios.post( `http://localhost:5000/deletecategory?id=${data}`
+    axios.post( `http://localhost:5000/deletecategory?id=${data.id}`
     ).then((res)=>console.log("succes")).catch(()=>console.log("error"))
-     window.location.reload(false);
+    window.location.reload(false);
   }
 
   return(
@@ -47,9 +45,7 @@ const [prod, setProd] = useState([])
       <td> {current.name}</td>
       <td> {current.description}</td>
       <td> {current.status}</td>
-      <td><button  type="button" style={{backgroundColor:"red"}} onClick={()=>remove(current.id)} >Delete</button></td>
-
-
+      <td><button  type="button" style={{backgroundColor:"red"}} onClick={()=>remove(current)} >Delete</button></td>
       </tr> 
       </>
     )
@@ -57,8 +53,6 @@ const [prod, setProd] = useState([])
 }
 </table>
 </div>
-
-
   )
 }
 export default ShowCategory;

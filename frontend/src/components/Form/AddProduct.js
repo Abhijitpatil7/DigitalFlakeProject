@@ -14,13 +14,14 @@ const AddProduct = (props) => {
   });
   const navigate = useNavigate();
   let name, value;
-
+  const storedToken = localStorage.getItem('jwtToken');
+  console.log(storedToken);
+const headers ={'Authorization' : `bearer ${storedToken}` }
   const handleChange = (e) => {
     name = e.target.name;
     value = e.target.value;
     setCat({ ...cat, [name]: value });
   };
-
   const handleclick = (e) => {
     axios
     .post(
@@ -34,7 +35,7 @@ const AddProduct = (props) => {
         console.log("error");
         console.log(cat);
       });
-      //window.location.reload(false);
+      window.location.reload(false);
     }
 
 

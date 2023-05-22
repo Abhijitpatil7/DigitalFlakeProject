@@ -17,12 +17,13 @@ const AddCategory = (props) => {
     value = e.target.value;
     setCat({ ...cat, [name]: value });
   };
-
+const storedToken = localStorage.getItem('jwtToken');
+console.log(storedToken);
+const headers ={'Authorization' : `bearer ${storedToken}` }
   const handleclick = (e) => {
     axios
     .post(
       `http://localhost:5000/addcategory?name=${cat.name}&description=${cat.description}&status=${cat.status}`
-     
     )
       .then((resp) => {
         console.log("success");
@@ -31,7 +32,7 @@ const AddCategory = (props) => {
         console.log("error");
         console.log(cat);
       });
-      //window.location.reload(false);
+      window.location.reload(false);
     }
 
 
